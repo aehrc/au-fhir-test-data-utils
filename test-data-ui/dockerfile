@@ -1,0 +1,45 @@
+# Stage 1: Build React app
+FROM node:alpine AS react-build
+
+WORKDIR /app
+
+# Copy only package.json and package-lock.json first (for caching)
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY webpack.config.js ./
+
+# Install node modules
+RUN npm install
+
+# Copy React source
+COPY frontend/ ./frontend/
+
+# Build React app (assuming build outputs to /static)
+RUN npm run build
+
+# Stage 2: Build Django app and copy React build output
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# Install system dependencies needed for Python packages and update all packages
+RUN apt-get update && apt-get upgrade -y && apt-get install -y build-essential && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy Django source and other project files (excluding node_modules and frontend)
+COPY apis/ ./apis/
+COPY tdui/ ./tdui/
+COPY manage.py ./
+COPY templates/ ./templates/
+
+# Copy static folder with React build from react-build stage
+COPY --from=react-build /app/static ./static
+
+# Expose port (adjust if needed)
+EXPOSE 8000
+
+# Run Django server (adjust to your preferred entrypoint)
+CMD ["gunicorn", "tdui.wsgi:application", "--bind", "0.0.0.0:8000"]

@@ -1,0 +1,31 @@
+# === Python / Django ===
+
+# Django
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.log
+*.pot
+*.pyc
+staticfiles/
+local_settings.py
+
+# Environment variables
+.env
+
+# Virtual environments
+.venv/
+
+# IDEs / Editors
+.vscode/
+
+# macOS
+.DS_Store
+
+# Docker
+*.pid
+
+# Node modules
+node_modules/
+package-lock.json
