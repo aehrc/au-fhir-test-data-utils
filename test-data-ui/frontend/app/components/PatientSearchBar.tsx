@@ -2,7 +2,7 @@
  *  Search resources by patient: an autocomplete with all the patient ids.
  */
 
-import { useFilter } from "@context/FilterContext";
+import { useFilterContext } from "@context/FilterContext";
 import type FilterOptions from "@models/FilterOptions";
 import { Autocomplete, FormControl, TextField } from "@mui/material";
 import React from "react";
@@ -12,7 +12,7 @@ const PatientSearchBar = ({
 }: {
   filterOptions: FilterOptions;
 }): React.JSX.Element => {
-  const { filter, setFilter } = useFilter();
+  const { filter, setFilter } = useFilterContext();
   return (
     <FormControl>
       <Autocomplete
