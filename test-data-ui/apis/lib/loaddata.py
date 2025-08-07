@@ -9,11 +9,12 @@ from apis.models import Project, Tag, Resource, Reference
 # find all references in the json object
 def find_references(obj, refs=None):
         if refs is None:
-            refs = []
+            refs = set()
         if isinstance(obj, dict):
             for k, v in obj.items():
-                if k == 'reference':
-                    refs.append(v)
+                if k == 'reference' and isinstance(v, str):
+                    if not v.startswith('#'):  # ignore local references
+                        refs.add(v)
                 else:
                     find_references(v, refs)
         elif isinstance(obj, list):
@@ -35,6 +36,9 @@ def metadata(resource, filename):
     }
     if resource_type in ('Patient','Practitioner','PractitionerRole','Organization','HealthcareService','Location'):
         meta_item['tag'].append('Service Australia')
+    # TODO we will need a flag for no references in the metadata for cases like this, then we can retire the quarantine file in workflow
+    if resource_type in ('Bundle'):
+        meta_item['references'] = []
     for pf in ('subject', 'patient'):
         if pf in resource and 'reference' in resource[pf] and resource[pf]['reference'].startswith('Patient'):
             pat = resource[pf]['reference'].split('/')[1]
