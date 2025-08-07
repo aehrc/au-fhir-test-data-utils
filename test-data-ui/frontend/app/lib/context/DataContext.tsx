@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import type FilterOptions from "@models/FilterOptions";
 import { EmptyOptions } from "@models/FilterOptions";
 import type { Metadata } from "@models/Resource";
@@ -9,6 +15,7 @@ type DataContextType = {
   loading: boolean;
   error: string | null;
   empty: boolean;
+  lazyFetch: () => void;
 };
 
 const DataContext = createContext<DataContextType>({
@@ -17,13 +24,18 @@ const DataContext = createContext<DataContextType>({
   loading: true,
   error: null,
   empty: false,
+  lazyFetch: () => {},
 });
 
-export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>(EmptyOptions);
+export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [filterOptions, setFilterOptions] =
+    useState<FilterOptions>(EmptyOptions);
   const [metadata, setMetadata] = useState<Metadata[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const fetched = useRef<boolean>(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -49,11 +61,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const lazyFetch = () => {
+    if (!fetched.current) {
+      fetched.current = true;
+      fetchData();
+    }
+  };
 
-  const empty = !loading && !error && (metadata.length === 0);
+  const empty = !loading && !error && metadata.length === 0;
 
   const contextValue = React.useMemo(
     () => ({
@@ -62,15 +77,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       loading,
       error,
       empty,
+      lazyFetch,
     }),
     [filterOptions, metadata, loading, error, empty]
   );
 
   return (
-    <DataContext.Provider value={contextValue}>
-      {children}
-    </DataContext.Provider>
+    <DataContext.Provider value={contextValue}>{children}</DataContext.Provider>
   );
 };
 
-export const useDataContext = () => useContext(DataContext);
+export const useDataContext = () => {
+  const context = useContext(DataContext);
+  if (!context) {
+    throw new Error("useDataContext must be used within a DataProvider");
+  }
+  useEffect(() => {
+    context.lazyFetch();
+  }, []);
+  return context;
+};
