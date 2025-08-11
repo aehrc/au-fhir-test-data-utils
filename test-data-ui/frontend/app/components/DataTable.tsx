@@ -100,11 +100,6 @@ const DataTable = (): React.JSX.Element => {
     <Paper sx={{ height: "100%", width: "100%" }}>
       {metadata && (
         <>
-          <Box sx={{ mb: 1, display: "flex", justifyContent: "flex-end" }}>
-            <Button variant="outlined" startIcon={<GridDownloadIcon />}>
-              Download Current Search Results
-            </Button>
-          </Box>
           <DataGrid
             rows={filterData(filter, Object.values(metadata))}
             columns={columns}

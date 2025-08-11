@@ -21,6 +21,10 @@ def search_and_filter(filter):
         tag = general.get('tag')
         if tag and tag != 'all':
             queryset = queryset.filter(tags__name=tag)
+        resource_id_exact = general.get('idExact')
+        if resource_id_exact:
+            # Filter by exact id match
+            queryset = queryset.filter(resourceId=resource_id_exact)
         # Filter by id (partial match)
         resource_id = general.get('id')
         if resource_id:

@@ -4,7 +4,7 @@
 
 export type FilterMode = "general" | "patient";
 
-export const DefaultFilter: Filter = {
+export const DefaultFilter = (): Filter => ({
   mode: "general",
   general: {
     resourceType: "all",
@@ -13,14 +13,14 @@ export const DefaultFilter: Filter = {
     id: "",
   },
   patient: "",
-};
+});
 
 export type GeneralFilter = {
-    resourceType: string;
-    project: string;
-    tag: string;
-    id: string;
-  };
+  resourceType: string;
+  project: string;
+  tag: string;
+  id: string;
+};
 
 type Filter = {
   mode: FilterMode;

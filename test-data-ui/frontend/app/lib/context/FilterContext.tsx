@@ -10,7 +10,7 @@ interface FilterContextType {
 const FilterContext = createContext<FilterContextType | undefined >(undefined);
 
 export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [filter, setFilter] = useState<Filter>(DefaultFilter);
+  const [filter, setFilter] = useState<Filter>(DefaultFilter());
   const value = useMemo(() => ({ filter, setFilter }), [filter]);
   return (
     <FilterContext.Provider value={value}>
