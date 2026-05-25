@@ -12,6 +12,7 @@ SHEETS = [
     "Procedure",
     "Location",
     "MedicationRequest",
+    "MedicationStatement",
     "Medication",
     #'Specimen',
     "RelatedPerson",
