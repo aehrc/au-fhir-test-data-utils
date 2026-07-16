@@ -43,8 +43,10 @@ We value contributions to **au-fhir-test-data-utils**. Here’s how you can help
 
 The following steps are for Windows. However, none of the dependencies are native, so with a little bit of understanding of the shell, you should be able to use Unix-flavors (Mac, Linux, ...) as well.
 
-1. Install [.Net SDK 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+1. Install the [.NET SDK 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (the open-source, cross-platform [.NET Core](https://learn.microsoft.com/en-us/dotnet/core/install) toolchain, not .NET Framework).
 2. (Optional) Install [VSCode](https://code.visualstudio.com/Download).
+
+Note: the .NET SDK does not include the standalone `msbuild` executable, so use `dotnet build` (or the provided `.bat` scripts, which call `dotnet publish`) instead. See the [full list of tools included in the SDK](https://learn.microsoft.com/en-us/dotnet/core/tools/) for reference.
 
 ### Building
 
